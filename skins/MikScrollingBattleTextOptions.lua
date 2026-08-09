@@ -36,7 +36,12 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
         if otype == "Button" then
           if name and string.find(name, "CloseButton") then
             -- anchored to the backdrop by the caller, which owns it
-          elseif name and string.find(name, "Tab%d") then
+          elseif name and string.find(name, "Tab%d+$") then
+            -- Anchored to the END of the name on purpose. The six tab buttons
+            -- are MSBTFrameOptionsTab1..Tab6, but every widget inside a tab is
+            -- named through it -- MSBTFrameOptionsTab3FrameEvent1EditFontSettingsButton
+            -- and so on -- so an unanchored "Tab%d" matched all of them and sent
+            -- every button in the window through SkinTab instead of SkinButton.
             if SkinTab then SkinTab(child) end
             child.pfSkinned = true
           elseif name and string.find(name, "ColorSwatch") then
@@ -81,19 +86,23 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
     if not frame or frame.pfSkinned then return end
 
     StripTextures(frame)
-    if frame.SetBackdrop then frame:SetBackdrop(nil) end
-    if frame.SetBackdropColor then frame:SetBackdropColor(0, 0, 0, 0) end
-    CreateBackdrop(frame, nil, nil, .8)
+
+    -- Legacy backdrop, i.e. painted on the frame itself rather than into a
+    -- child frame. The default path parents the backdrop to the window at
+    -- frame level - 1, which on a toplevel frame (all four of these are) ends
+    -- up behind the window instead of inside it, so the body rendered fully
+    -- transparent with the game world showing through.
+    CreateBackdrop(frame, nil, true, .9)
     CreateBackdropShadow(frame)
 
-    if frame.backdrop then
-      frame.backdrop:SetBackdropColor(0, 0, 0, .8)
+    if frame.SetBackdropColor then
+      frame:SetBackdropColor(0, 0, 0, .9)
       local er, eg, eb, ea = GetStringColor(pfUI_config.appearance.border.color)
-      frame.backdrop:SetBackdropBorderColor(er, eg, eb, ea)
+      frame:SetBackdropBorderColor(er, eg, eb, ea)
     end
 
     local close = _G[frame:GetName() .. "CloseButton"]
-    if close then SkinCloseButton(close, frame.backdrop) end
+    if close then SkinCloseButton(close, frame) end
 
     SkinChildren(frame, 0)
     frame.pfSkinned = true

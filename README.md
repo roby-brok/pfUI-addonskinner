@@ -23,6 +23,18 @@
 > Two deliberate exclusions: colour swatches (the swatch *is* its texture, so skinning it
 > would hide the colour it exists to show) and the three scroll-area mover frames (drag
 > handles whose art is the affordance).
+>
+> Two things worth knowing if you write a skin for a window like this one:
+>
+> - **Anchor tab-name patterns to the end of the string.** The six tabs are
+>   `MSBTFrameOptionsTab1`…`Tab6`, but every widget *inside* a tab is named through it —
+>   `MSBTFrameOptionsTab3FrameEvent1EditFontSettingsButton` — so an unanchored `Tab%d`
+>   matches all of them and quietly routes every button in the window through `SkinTab`
+>   instead of `SkinButton`.
+> - **Use the legacy backdrop on `toplevel` frames.** `CreateBackdrop`'s default path
+>   parents the backdrop to the window at frame level − 1, which on a toplevel frame lands
+>   *behind* the window; the body then renders fully transparent with the game world showing
+>   through. Passing `legacy = true` paints the frame itself instead.
 
 This addon is an external module for [pfUI](https://github.com/shagu/pfUI) addon.
 
