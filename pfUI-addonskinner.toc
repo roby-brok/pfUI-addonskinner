@@ -2,7 +2,7 @@
 ## Title: |cff33ffccpf|cffffffffUI|cffaaaaaa [Addon Skinner]
 ## Author: dein0s and RoadBlock
 ## Notes: External module for |cff33ffccpf|cffffffffUI
-## Version: 0.4
+## Version: 0.5
 ## Dependencies: pfUI
 ## X-LocalName: Addon Skinner
 
@@ -42,6 +42,7 @@ skins\LevelRange-Turtle.lua
 skins\LootBlare.lua
 skins\LoseControl.lua
 skins\ManaStones.lua
+skins\MikScrollingBattleTextOptions.lua
 skins\ModifiedPowerAuras.lua
 skins\MouseOverSounds.lua
 skins\MTLove.lua
