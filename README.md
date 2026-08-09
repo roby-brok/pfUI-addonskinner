@@ -35,6 +35,12 @@
 >   parents the backdrop to the window at frame level − 1, which on a toplevel frame lands
 >   *behind* the window; the body then renders fully transparent with the game world showing
 >   through. Passing `legacy = true` paints the frame itself instead.
+> - **`SkinScrollbar` takes the scrollbar, not the scroll frame** — `$parentScrollBar`. The
+>   mistake is silent and expensive: the skinner wraps each skin in a single `pcall`, so one
+>   bad call abandons everything after it. Here that produced a window whose first tab was
+>   flawless and whose other five were completely untouched, with no error shown unless you
+>   enable notifications. Wrapping each individual widget in its own `pcall` means one odd
+>   widget costs you that widget instead of the other hundred and fifty.
 
 This addon is an external module for [pfUI](https://github.com/shagu/pfUI) addon.
 

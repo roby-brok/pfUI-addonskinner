@@ -21,6 +21,17 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
   local SkinSlider, SkinTab = penv.SkinSlider, penv.SkinTab
   local GetStringColor = penv.GetStringColor
 
+  -- Isolate every widget. The skinner already wraps the whole skin in one
+  -- pcall, which means a single bad call takes the rest of the window with it:
+  -- passing a ScrollFrame to SkinScrollbar (it wants the scrollbar) aborted the
+  -- walk on the first tab that had one, so the General tab came out perfect and
+  -- every tab after it was left completely unskinned. One widget failing must
+  -- not cost the other hundred and fifty.
+  local function try(fn, a, b, c, d)
+    if not fn then return end
+    pcall(fn, a, b, c, d)
+  end
+
   -- Enumerating names is hopeless here -- the event and trigger rows alone are
   -- generated from templates in the hundreds -- so walk the tree and skin by
   -- object type. Each widget is marked so reopening the window is a no-op.
@@ -42,37 +53,40 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
             -- named through it -- MSBTFrameOptionsTab3FrameEvent1EditFontSettingsButton
             -- and so on -- so an unanchored "Tab%d" matched all of them and sent
             -- every button in the window through SkinTab instead of SkinButton.
-            if SkinTab then SkinTab(child) end
+            try(SkinTab, child)
             child.pfSkinned = true
           elseif name and string.find(name, "ColorSwatch") then
             -- a colour swatch IS its texture; skinning it would hide the colour
           else
-            SkinButton(child)
+            try(SkinButton, child)
             child.pfSkinned = true
           end
 
         elseif otype == "CheckButton" then
-          if SkinCheckbox then SkinCheckbox(child) end
+          try(SkinCheckbox, child)
           child.pfSkinned = true
 
         elseif otype == "EditBox" then
           -- pfUI has no SkinEditBox; the convention elsewhere is to strip the
           -- Blizzard art and give it the standard backdrop.
-          StripTextures(child)
+          try(StripTextures, child)
           if child.SetBackdrop then child:SetBackdrop(nil) end
-          CreateBackdrop(child, nil, nil, .8)
+          try(CreateBackdrop, child, nil, nil, .8)
           child.pfSkinned = true
 
         elseif otype == "Slider" then
-          if SkinSlider then SkinSlider(child) end
+          try(SkinSlider, child)
           child.pfSkinned = true
 
         elseif otype == "ScrollFrame" then
-          if SkinScrollbar then SkinScrollbar(child) end
+          -- SkinScrollbar wants the scrollbar, not the scroll frame. Handing it
+          -- the frame is what broke every tab past General.
+          try(StripTextures, child)
+          if name then try(SkinScrollbar, _G[name .. "ScrollBar"]) end
           child.pfSkinned = true
 
         elseif otype == "Frame" and name and string.find(name, "Dropdown") then
-          if SkinDropDown then SkinDropDown(child) end
+          try(SkinDropDown, child)
           child.pfSkinned = true
         end
       end
@@ -85,15 +99,15 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
   local function SkinWindow(frame)
     if not frame or frame.pfSkinned then return end
 
-    StripTextures(frame)
+    try(StripTextures, frame)
 
     -- Legacy backdrop, i.e. painted on the frame itself rather than into a
     -- child frame. The default path parents the backdrop to the window at
     -- frame level - 1, which on a toplevel frame (all four of these are) ends
     -- up behind the window instead of inside it, so the body rendered fully
     -- transparent with the game world showing through.
-    CreateBackdrop(frame, nil, true, .9)
-    CreateBackdropShadow(frame)
+    try(CreateBackdrop, frame, nil, true, .9)
+    try(CreateBackdropShadow, frame)
 
     if frame.SetBackdropColor then
       frame:SetBackdropColor(0, 0, 0, .9)
@@ -102,7 +116,7 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
     end
 
     local close = _G[frame:GetName() .. "CloseButton"]
-    if close then SkinCloseButton(close, frame) end
+    if close then try(SkinCloseButton, close, frame) end
 
     SkinChildren(frame, 0)
     frame.pfSkinned = true
