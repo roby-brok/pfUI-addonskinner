@@ -122,14 +122,25 @@ pfUI.addonskinner:RegisterSkin("MikScrollingBattleTextOptions", function()
     frame.pfSkinned = true
   end
 
-  -- The four windows the options addon can put on screen. The three scroll-area
-  -- mover frames are deliberately left alone: they are drag handles the user
-  -- positions the scroll areas with, and their art is the affordance.
+  -- Only the main tabbed window.
+  --
+  -- MSBTFontSettingsFrame (350x270), MSBTTriggerConfigFrame (400x270) and
+  -- MSBTScrollAreaMoverControlFrame (180x500) are all declared far smaller than
+  -- the content they display -- they relied on Blizzard art that overflows the
+  -- frame rect to look like windows at all. Strip that art and the backdrop
+  -- covers only the true rect, so the widgets spill onto the game world: the
+  -- font settings panel ended up a short black bar with its dropdowns and
+  -- preview text hanging below it, and the scroll-area window a narrow column
+  -- with dropdowns wider than the frame.
+  --
+  -- Fixing that means resizing and re-anchoring somebody else's layout by hand,
+  -- which is a different job from skinning it. MSBTFrameOptions is 640x440 and
+  -- honestly sized, so it is the one that gets skinned.
+  --
+  -- The three scroll-area mover frames stay untouched for a separate reason:
+  -- they are drag handles, and their art is the affordance.
   local windows = {
     "MSBTFrameOptions",
-    "MSBTFontSettingsFrame",
-    "MSBTTriggerConfigFrame",
-    "MSBTScrollAreaMoverControlFrame",
   }
 
   for _, name in ipairs(windows) do

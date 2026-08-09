@@ -9,9 +9,18 @@
 >
 > **0.5 — new skin: Mik's Scrolling Battle Text.** MSBT itself is scrolling text drawn on
 > the WorldFrame and has nothing to skin; its configuration lives in the load-on-demand
-> `MikScrollingBattleTextOptions` addon, which is an untouched 2007 Blizzard-art window —
-> four top-level frames built from `UI-Character-General` tiles, six tabs, and well over a
-> hundred buttons, checkboxes, editboxes, dropdowns and scrollbars.
+> `MikScrollingBattleTextOptions` addon, whose main window is an untouched 2007 Blizzard-art
+> panel — six tabs and well over a hundred buttons, checkboxes, editboxes, dropdowns and
+> scrollbars, built from `UI-Character-General` tiles.
+>
+> **Only `MSBTFrameOptions` is skinned.** Its three secondary windows are not, and cannot
+> safely be: `MSBTFontSettingsFrame` is declared 350×270, `MSBTTriggerConfigFrame` 400×270
+> and `MSBTScrollAreaMoverControlFrame` 180×500, all far smaller than the content they show.
+> They relied on Blizzard art overflowing the frame rect to look like windows at all, so
+> stripping it leaves the backdrop covering only the true rect and the widgets spilling onto
+> the game world. Making those work means resizing and re-anchoring someone else's layout,
+> which is a different job from skinning it. `MSBTFrameOptions` is 640×440 and honestly
+> sized, so that is the one that gets skinned.
 >
 > The skin is registered under the *options* addon's folder name, so `ADDON_LOADED` applies
 > it the moment the window is first opened rather than at login, when none of those frames
