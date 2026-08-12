@@ -46,6 +46,7 @@ skins\MikScrollingBattleTextOptions.lua
 skins\ModifiedPowerAuras.lua
 skins\MouseOverSounds.lua
 skins\MTLove.lua
+skins\OctoStats.lua
 skins\Outfitter.lua
 skins\pfQuest.lua
 skins\PizzaSlices.lua
