@@ -34,6 +34,7 @@ skins\EQL3.lua
 skins\ES_GuildCheckGUI.lua
 skins\FlightTracker.lua
 skins\GearMenu.lua
+skins\GreedMeter.lua
 skins\ignitestatus.lua
 skins\ItemHints.lua
 skins\ItemRack.lua

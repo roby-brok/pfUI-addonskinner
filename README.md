@@ -7,6 +7,29 @@
 > forks and pull requests for new skins, so that is what this is — use the original unless
 > you specifically want what is below.
 >
+> **New skin: GreedMeter.** iGreed's 1.12 combat meter. Its meter windows are
+> created at runtime -- one at login and up to six via the + button -- and the settings
+> and detail windows are only built on first open, so the skin wraps
+> `UI:CreateMeterFrame`, `UI:CreateDetailFrame` and `UI:CreateSettingsFrame` and skins
+> whatever they hand back, rather than skinning once at load and missing everything after.
+>
+> **The bars are deliberately not touched.** GreedMeter owns the bar texture and bar font
+> through its own Appearance page and re-applies both on every layout pass, so a texture
+> set from the skin is overwritten at the next refresh while the addon's own setting
+> quietly stops describing what is on screen. Its built-in **Flat** bar style is the one
+> that sits best next to pfUI. The header controls (Reset / Segment / Mode / Name /
+> Announce / + / -) are plain Buttons with a hand-rolled backdrop and a loose FontString,
+> so they get a backdrop and a highlight directly rather than going through `SkinButton`,
+> which drives textures and a button font they do not have.
+>
+> The legacy backdrop matters here for a second reason beyond the strata note below:
+> GreedMeter repaints its window background from its own **Window Opacity** slider on
+> every refresh. With the backdrop on the frame itself those repaints drive the pfUI
+> backdrop and the slider keeps working; moving the background onto a child frame would
+> have swallowed them and left the slider silently doing nothing. Only the border write is
+> dropped, since GreedMeter fades the border towards nothing as opacity falls and would
+> take pfUI's border with it.
+>
 > **0.5 — new skin: Mik's Scrolling Battle Text.** MSBT itself is scrolling text drawn on
 > the WorldFrame and has nothing to skin; its configuration lives in the load-on-demand
 > `MikScrollingBattleTextOptions` addon, whose main window is an untouched 2007 Blizzard-art
